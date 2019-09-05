@@ -1,0 +1,22 @@
+rm(list=ls())
+options(stringsAsFactors = F)
+
+
+gse_list=read.table('gse_list.txt' )[,1]
+gse_list
+                   ## ！！修改默认工作路径，需要与后文一致！！ ##
+setwd('默认工作路径')
+library(GEOquery)
+if(F){
+  
+  for (gse in gse_list) {
+    if(!file.exists(paste0(gse,'_eSet.Rdata'))){
+      gset <- getGEO(gse, destdir=".",
+                     AnnotGPL = F,
+                     getGPL = F)
+      save(gset,file=paste0(gse,'_eSet.Rdata'))
+    }
+   
+  }
+}
+setwd('默认工作路径')
