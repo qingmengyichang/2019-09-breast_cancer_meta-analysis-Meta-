@@ -1,0 +1,48 @@
+rm(list=ls())
+options(stringsAsFactors = F)
+gse_list=read.table('gse_list.txt' )[,1]
+gse_list
+getwd()
+library(GEOquery)  
+
+### ！！！ 前后文的一致性很重要，出现了问题应当首先检查代码是否正确 ！！！###
+
+list.files(path = "默认工作路径", pattern = '*.Rdata')
+a=list.files(path = "默认工作路径", pattern = '*.Rdata')
+str(a)
+load(file.path('默认工作路径',a[1]))
+gset[[1]] 
+exprs(gset[[1]])['202048_s_at',]
+data.frame(exprs(gset[[1]])['202048_s_at',])
+if(F){
+  cbx6=lapply(1:length(a),function(x){
+    load(file.path('默认工作路径',a[x]))
+    data.frame(exprs(gset[[1]])['202048_s_at',])
+  })
+  cbx6
+  save(cbx6,file = 'cbx6.rdata')
+}
+load(file = 'cbx6.rdata')
+
+
+
+
+do.call(rbind,cbx6)
+
+cxb6_g <- lapply(cbx6,function(x){
+v=as.numeric(x[,1])
+x$g=ifelse(v>median(v),'high','low')
+return(x)
+})
+do.call(rbind,cxb6_g)
+
+cxb6_expr <- do.call(rbind,cxb6_g)
+View(cxb6_expr)
+cxb6_expr$gsm=rownames(cxb6_expr)
+head(cxb6_expr)
+colnames(cxb6_expr)=c('value','group','gsm')
+save(cxb6_expr,file = 'cxb6_expr.rdata')
+write.csv(cxb6_expr,file = 'cxb6_expr.csv')
+
+
+
